@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="TellgearServer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/TellgearServer_jar</output-path>
+    <root id="archive" name="TellgearServer.jar">
+      <element id="module-output" name="TellgearServer" />
+    </root>
+  </artifact>
+</component>
