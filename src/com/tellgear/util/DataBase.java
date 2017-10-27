@@ -114,9 +114,9 @@ public class DataBase {
             Element newuser = doc.createElement("user");
             Element newusername = doc.createElement("username"); newusername.setTextContent(username);
             Element newpassword = doc.createElement("password"); newpassword.setTextContent(password);
-            Element newpermission = doc.createElement("permissions"); newpassword.setTextContent("user");
+            //Element newpermission = doc.createElement("permissions"); newpassword.setTextContent("user");
 
-            newuser.appendChild(newusername); newuser.appendChild(newpassword); newuser.appendChild(newpermission); data.appendChild(newuser);
+            newuser.appendChild(newusername); newuser.appendChild(newpassword); data.appendChild(newuser);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
