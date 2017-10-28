@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import static com.tellgear.util.Utilities.*;
+
 public class Client extends Thread{
 
     private Socket socket = null;
@@ -29,9 +31,9 @@ public class Client extends Thread{
     public void init() throws IOException {
         ID = UniqueIdentifier.getIdentifier();
 
-        System.out.println("-New client accepted-");
-        System.out.println("IP: "+socket.getInetAddress().toString());
-        System.out.println("ID: "+ID);
+        System.out.println(black("-New client accepted-"));
+        System.out.println(red("IP: ")+socket.getInetAddress().toString());
+        System.out.println(cyan("ID: ")+ID);
         System.out.println("-   -   -   -   -   -");
 
         out = new ObjectOutputStream(socket.getOutputStream());
@@ -50,6 +52,7 @@ public class Client extends Thread{
                 server.handle(ID, msg);
             }
             catch(Exception ioe){
+                ioe.printStackTrace();
                 System.out.println(ID + " ERROR reading: " + ioe.getMessage());
                 server.remove(ID);
                 stop();

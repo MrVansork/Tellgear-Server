@@ -1,14 +1,18 @@
 package com.tellgear;
 
 import com.tellgear.client.Client;
+import com.tellgear.net.User;
 import com.tellgear.util.Constants;
 import com.tellgear.util.DataBase;
 import com.tellgear.net.Message;
+import com.tellgear.util.Utilities;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.tellgear.util.Utilities.*;
 
 public class Server {
 
@@ -21,6 +25,7 @@ public class Server {
     public Server(int port){
         this.port = port;
         db = new DataBase(Constants.ProgramData+Constants.DataBaseName);
+        User.users = db.readUsers();
     }
 
     public void init(){
@@ -39,7 +44,7 @@ public class Server {
     }
 
     private void run() throws IOException {
-        System.out.println("Server started at: "+Constants.PORT);
+        System.out.println(green("Server started at: ")+Constants.PORT);
         while(running){
 
             clients.add(new Client(ss.accept(), this));
@@ -54,12 +59,15 @@ public class Server {
         }else{
             if(msg.type.equals("login")){
                 if(findClient(msg.sender) == null){
-                    if(db.checkLogin(msg.sender, msg.content)){
+                    if(User.checkLogin(msg.sender, msg.content)){
+
+                        User.findUser(msg.sender).setLastConnection(Utilities.getDate());
+                        saveUsers();
+
                         findClient(ID).setUsername(msg.sender);
                         findClient(ID).send(new Message("login", "SERVER", "TRUE", msg.sender));
                         Announce("newuser", "SERVER", msg.sender);
                         SendUserList(msg.sender);
-                        System.out.println("TRUE "+ID+" - ");
                     }
                     else{
                         findClient(ID).send(new Message("login", "SERVER", "FALSE:BAD_LOGIN", msg.sender));
@@ -82,11 +90,13 @@ public class Server {
 
             else if(msg.type.equals("signup")){
                 if(findClient(msg.sender) == null){
-                    if(!db.userExists(msg.sender)){
-                        db.addUser(msg.sender, msg.content);
+                    if(!User.exists(msg.sender)){
+                        System.out.println("New Client registered: "+msg.sender);
+                        User.addUser(msg.sender, msg.content);
+                        saveUsers();
+
                         findClient(ID).setUsername(msg.sender);
                         findClient(ID).send(new Message("signup", "SERVER", "TRUE", msg.sender));
-                        findClient(ID).send(new Message("login", "SERVER", "TRUE", msg.sender));
                         Announce("newuser", "SERVER", msg.sender);
                         SendUserList(msg.sender);
                     }
@@ -98,6 +108,14 @@ public class Server {
                     findClient(ID).send(new Message("signup", "SERVER", "FALSE:ON_LINE", msg.sender));
                 }
             }
+        }
+    }
+
+    private void saveUsers(){
+        try {
+            db.saveUsers();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
