@@ -88,6 +88,10 @@ public class Server {
                 }
             }
 
+            else if(msg.type.equals("writing")){
+                Announce("writing", msg.sender, msg.content);
+            }
+
             else if(msg.type.equals("signup")){
                 if(findClient(msg.sender) == null){
                     if(!User.exists(msg.sender)){
@@ -126,7 +130,7 @@ public class Server {
     }
 
     public void Announce(String type, String sender, String content){
-        Message msg = new Message(type, sender, content, "All");
+        Message msg = new Message(type, sender, content, "!!##ALL");
         for(int i = 0; i < clients.size(); i++){
             clients.get(i).send(msg);
         }
